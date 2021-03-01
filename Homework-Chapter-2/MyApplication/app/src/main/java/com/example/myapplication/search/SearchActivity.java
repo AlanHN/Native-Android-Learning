@@ -14,6 +14,7 @@ import java.util.List;
 
 public class SearchActivity extends AppCompatActivity {
 
+    //Debug usage
     private static final String TAG = "SearchActivity";
 
     private final SearchAdapter mSearchAdapter = new SearchAdapter();
@@ -34,18 +35,15 @@ public class SearchActivity extends AppCompatActivity {
         mSearchAdapter.notifyItems(items);
 
         SearchLayout mSearchLayout = findViewById(R.id.search);
-        mSearchLayout.setOnSearchTextChangedListener(new SearchLayout.OnSearchTextChangedListener() {
-            @Override
-            public void afterChanged(String text) {
-                Log.i(TAG, "afterChanged: " + text);
-                List<String> filters = new ArrayList<>();
-                for (String item : items) {
-                    if (item.contains(text)) {
-                        filters.add(item);
-                    }
+        mSearchLayout.setOnSearchTextChangedListener(text -> {
+            Log.i(TAG, "afterChanged: " + text);
+            List<String> filters = new ArrayList<>();
+            for (String item : items) {
+                if (item.contains(text)) {
+                    filters.add(item);
                 }
-                mSearchAdapter.notifyItems(filters);
             }
+            mSearchAdapter.notifyItems(filters);
         });
 
     }

@@ -66,13 +66,7 @@ public class SearchLayout extends LinearLayout {
             }
         });
 
-        mCancel.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((Activity) getContext()).finish();
-
-            }
-        });
+        mCancel.setOnClickListener(v -> mEditView.setText(""));
 
     }
 

@@ -2,9 +2,13 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+
+import com.example.myapplication.search.SearchActivity;
 
 public class MyActivity extends AppCompatActivity {
 
@@ -16,6 +20,12 @@ public class MyActivity extends AppCompatActivity {
         String extra = getIntent().getStringExtra("extra");
         Log.d(extra,extra);
         TextView textView = findViewById(R.id.text);
-        textView.setText(extra);
+        String placeholder = extra+"😊";
+        textView.setText(placeholder);
+
+        findViewById(R.id.btn).setOnClickListener(v -> {
+            Intent intent = new Intent(MyActivity.this, SearchActivity.class);
+            startActivity(intent);
+        });
     }
 }

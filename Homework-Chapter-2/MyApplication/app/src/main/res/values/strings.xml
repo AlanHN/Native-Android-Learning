@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Search App Demo</string>
+    <string name="a_search_logo">a search logo</string>
+    <string name="hint">在此处输入</string>
+    <string name="cancel">取消</string>
+    <string name="iline">这是第i行</string>
+    <string name="display">Display</string>
+    <string name="returntosearch">返回搜索页面</string>
 </resources>

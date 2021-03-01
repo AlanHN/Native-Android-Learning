@@ -7,13 +7,21 @@
 
     <TextView
         android:id="@+id/text"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="123"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/display"
         android:textSize="45sp"
-        android:textColor="#ffffff"
+        android:textColor="@color/black"
         android:textStyle="bold"
         android:gravity="center"
-        android:background="@color/colorPrimaryDark"/>
+        android:background="@color/white"/>
+
+    <TextView
+        android:id="@+id/btn"
+        android:layout_marginTop="10pt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="@string/returntosearch" />
 
 </LinearLayout>

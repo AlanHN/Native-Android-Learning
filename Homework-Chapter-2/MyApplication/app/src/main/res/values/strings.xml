@@ -6,4 +6,5 @@
     <string name="iline">这是第 i 行</string>
     <string name="display">Display</string>
     <string name="returntosearch">返回搜索页面</string>
+    <string name="toast">点击显示toast</string>
 </resources>

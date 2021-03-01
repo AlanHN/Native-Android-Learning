@@ -2,26 +2,36 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center">
+    android:gravity="center"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/display"
-        android:textSize="45sp"
-        android:textColor="@color/black"
-        android:textStyle="bold"
+        android:background="@color/white"
         android:gravity="center"
-        android:background="@color/white"/>
+        android:text="@string/display"
+        android:typeface="serif"
+        android:textColor="@color/black"
+        android:textSize="45sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/tbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:typeface="serif"
+        android:text="@string/toast" >
+    </Button>
 
     <TextView
         android:id="@+id/btn"
-        android:layout_marginTop="10pt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10pt"
         android:gravity="center_vertical"
+        android:typeface="serif"
         android:text="@string/returntosearch" />
 
 </LinearLayout>

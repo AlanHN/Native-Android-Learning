@@ -1,0 +1,27 @@
+# Homework-Chapter-3
+
+[TOC]
+
+## Exercise 1
+
+- [x] 引入 Lottie 库实现简单的图标动画
+- [x]  在 activity_main.xml 中添加 LottieAnimationView
+- [x]  在 SeekBar 的回调中修改 LottieAnimationView 的进度
+
+## Exercise 2
+
+- [x] 使用属性动画，练习AnimatorSet 和 scale/fade 等基本动画样式
+
+1. 添加 scale 动画
+2. 添加 alpha 动画
+3. 组合到 AnimatorSet 中
+
+
+
+## Exercise 3
+
+- [x] 使用 ViewPager 和 Fragment 做一个简单的好友列表界面
+
+1. 使用 ViewPager 和 Fragment 做可滑动界面
+2. 使用 TabLayout 添加 Tab 支持
+3. 对于好友列表 Fragment，使用 Lottie 实现 Loading 效果，5s后展示实际列表，要求这里的动效是淡入淡出

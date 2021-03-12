@@ -25,3 +25,10 @@
 1. 使用 ViewPager 和 Fragment 做可滑动界面
 2. 使用 TabLayout 添加 Tab 支持
 3. 对于好友列表 Fragment，使用 Lottie 实现 Loading 效果，5s后展示实际列表，要求这里的动效是淡入淡出
+
+
+
+## Notes
+
+1. 若将animator.setRepeatCount(1)，动画会执行两次。
+2. 若使用FrameLayout会导致tab无法点击。

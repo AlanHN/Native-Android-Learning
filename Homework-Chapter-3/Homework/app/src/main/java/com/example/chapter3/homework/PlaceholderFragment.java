@@ -72,7 +72,7 @@ public class PlaceholderFragment extends Fragment {
                         0.0f,
                         1.0f);
                 animator1.setDuration(1000);
-                animator1.setRepeatCount(1);
+//                animator1.setRepeatCount(1);
 
                 AnimatorSet animatorSet = new AnimatorSet();
                 animatorSet.playTogether(animator1,animator2);

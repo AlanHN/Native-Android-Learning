@@ -1,16 +1,15 @@
 package com.ss.android.ugc.demo;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,14 +38,13 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private TextView mText;
-    private TextView mClockTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        //TODO 时钟页面
-        mClockTv = findViewById(R.id.clock);
+        //TODO 时钟页面
+        TextView mClockTv = findViewById(R.id.clock);
         mClockTv.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ClockActivity.class);
@@ -61,9 +59,10 @@ public class MainActivity extends AppCompatActivity {
         //Demo3: HandlerThread
 //        new StockHandlerThread("stock").start();
         //Demo4: IntentService
-        Intent intent = new Intent(MainActivity.this, DownloadService.class);
-        intent.putExtra("url", "http://www.xxx.mp4");
-        startService(intent);
+
+//        Intent intent = new Intent(MainActivity.this, DownloadService.class);
+//        intent.putExtra("url", "http://www.xxx.mp4");
+//        startService(intent);
     }
 
     private class DownloadThread extends Thread {

@@ -10,15 +10,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class ClockActivity extends AppCompatActivity {
 
-    private View mRootView;
-    private Clock mClockView;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clock);
-        mRootView = findViewById(R.id.root);
-        mClockView = findViewById(R.id.clock);
+        View mRootView = findViewById(R.id.root);
+        Clock mClockView = findViewById(R.id.clock);
     }
 
 }

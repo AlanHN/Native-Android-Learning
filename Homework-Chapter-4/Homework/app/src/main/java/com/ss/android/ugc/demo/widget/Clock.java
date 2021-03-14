@@ -5,15 +5,11 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Message;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.ss.android.ugc.demo.R;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -32,16 +28,21 @@ public class Clock extends View {
 
     private static final float DEFAULT_DEGREE_STROKE_WIDTH = 0.010f;
 
+    @SuppressLint("DrawAllocation")
+    Handler handler = new Handler();
+    Runnable runnable = this::invalidate;
+
+
     public final static int AM = 0;
 
     private static final int RIGHT_ANGLE = 90;
 
-    private float PANEL_RADIUS = 200.0f;// 表盘半径
+    private static float  PANEL_RADIUS = 200.0f;// 表盘半径
 
     private float HOUR_POINTER_LENGTH;// 指针长度
     private float MINUTE_POINTER_LENGTH;
     private float SECOND_POINTER_LENGTH;
-    private float UNIT_DEGREE = (float) (6 * Math.PI / 180);// 一个小格的度数
+    private static final float UNIT_DEGREE = (float) (6 * Math.PI / 180);// 一个小格的度数
 
     private int mWidth, mCenterX, mCenterY, mRadius;
 
@@ -108,10 +109,7 @@ public class Clock extends View {
         drawHoursValues(canvas);
         drawNeedles(canvas);
 
-        // todo 1: 每一秒刷新一次，让指针动起来
-        @SuppressLint("DrawAllocation")
-        Handler handler = new Handler();
-        Runnable runnable = this::invalidate;
+        // Todo 1: 每一秒刷新一次，让指针动起来
         handler.postDelayed(runnable,1000);
     }
 

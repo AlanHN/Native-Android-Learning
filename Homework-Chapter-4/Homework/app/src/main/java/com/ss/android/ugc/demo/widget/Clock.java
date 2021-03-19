@@ -109,7 +109,7 @@ public class Clock extends View {
         drawHoursValues(canvas);
         drawNeedles(canvas);
 
-        // Todo 1: 每一秒刷新一次，让指针动起来
+        // todo 1: 每一秒刷新一次，让指针动起来
         handler.postDelayed(runnable,1000);
     }
 
@@ -204,7 +204,6 @@ public class Clock extends View {
                 pointerHeadXY = getPointerHeadXY(SECOND_POINTER_LENGTH, degree);
                 break;
         }
-
 
         canvas.drawLine(mCenterX, mCenterY, pointerHeadXY[0], pointerHeadXY[1], mNeedlePaint);
     }

@@ -1,18 +1,34 @@
 package com.bytedance.practice5;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.View;
-import com.facebook.drawee.backends.pipeline.Fresco;
+import android.widget.Toast;
 
+import com.bytedance.practice5.model.MessageListResponse;
+import com.bytedance.practice5.socket.SocketActivity;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "chapter5";
-    private FeedAdapter adapter = new FeedAdapter();
+    private final FeedAdapter adapter = new FeedAdapter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_upload).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,UploadActivity.class);
+                Intent intent = new Intent(MainActivity.this, UploadActivity.class);
                 startActivity(intent);
             }
         });
@@ -42,7 +58,13 @@ public class MainActivity extends AppCompatActivity {
                 getData(null);
             }
         });
-
+        findViewById(R.id.btn_socket).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SocketActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
     }
@@ -50,8 +72,63 @@ public class MainActivity extends AppCompatActivity {
     //TODO 2
     // 用HttpUrlConnection实现获取留言列表数据，用Gson解析数据，更新UI（调用adapter.setData()方法）
     // 注意网络请求和UI更新分别应该放在哪个线程中
-    private void getData(String studentId){
+    private void getData(String studentId) {
 
+        Log.d(TAG, "getData: start");
+
+        // a network thread
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                String urlStr;
+                if(studentId == null)
+                {
+                    urlStr = Constants.BASE_URL + "messages";
+                }
+                else{
+                    urlStr = String.format(Constants.BASE_URL + "messages?student_id=%s", studentId);
+                }
+                Log.d(TAG, "getData: "+urlStr);
+
+                MessageListResponse result = null;
+                try {
+                    URL url = new URL(urlStr);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+                    conn.setConnectTimeout(6000);
+                    conn.setRequestMethod("GET");
+
+                    if (conn.getResponseCode() == 200) {
+
+                        InputStream in = conn.getInputStream();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+
+                        result = new Gson().fromJson(reader, new TypeToken<MessageListResponse>() {
+                        }.getType());
+
+                        reader.close();
+                        in.close();
+                        MessageListResponse finalResult = result;
+                        // main thread
+                        new Handler(getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.setData(finalResult.feeds);
+                            }
+                        });
+
+                    } else{
+                        Log.d(TAG, "getData: error" + conn.getResponseCode());
+                    }
+                    conn.disconnect();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        ).start();
     }
 
 

@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -14,10 +16,21 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bytedance.practice5.model.MessageListResponse;
 import com.bytedance.practice5.model.UploadResponse;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -29,7 +42,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UploadActivity extends AppCompatActivity {
-    private static final String TAG = "chapter5";
+    private static final String TAG = "UploadActivity";
     private static final long MAX_FILE_SIZE = 2 * 1024 * 1024;
     private static final int REQUEST_CODE_COVER_IMAGE = 101;
     private static final String COVER_IMAGE_TYPE = "image/*";
@@ -37,7 +50,7 @@ public class UploadActivity extends AppCompatActivity {
     private Uri coverImageUri;
     private SimpleDraweeView coverSD;
     private EditText toEditText;
-    private EditText contentEditText ;
+    private EditText contentEditText;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,6 +101,11 @@ public class UploadActivity extends AppCompatActivity {
         //TODO 3
         // 创建Retrofit实例
         // 生成api对象
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        api = retrofit.create(IApi.class);
     }
 
     private void getFile(int requestCode, String type, String title) {
@@ -100,6 +118,8 @@ public class UploadActivity extends AppCompatActivity {
     }
 
     private void submit() {
+
+        Log.d(TAG, "submit: start");
         byte[] coverImageData = readDataFromUri(coverImageUri);
         if (coverImageData == null || coverImageData.length == 0) {
             Toast.makeText(this, "封面不存在", Toast.LENGTH_SHORT).show();
@@ -116,13 +136,134 @@ public class UploadActivity extends AppCompatActivity {
             return;
         }
 
-        if ( coverImageData.length >= MAX_FILE_SIZE) {
+        if (coverImageData.length >= MAX_FILE_SIZE) {
             Toast.makeText(this, "文件过大", Toast.LENGTH_SHORT).show();
             return;
         }
         //TODO 5
         // 使用api.submitMessage()方法提交留言
         // 如果提交成功则关闭activity，否则弹出toast
+
+        MultipartBody.Part from = MultipartBody.Part.createFormData("from", Constants.USER_NAME);
+        MultipartBody.Part to2 = MultipartBody.Part.createFormData("to", to);
+        MultipartBody.Part content2 = MultipartBody.Part.createFormData("content", content);
+        MultipartBody.Part image = MultipartBody.Part.createFormData("image", "cover.png", RequestBody.create(MediaType.parse("multipart/form-data"), coverImageData));
+
+        Call<UploadResponse> response = api.submitMessage(Constants.STUDENT_ID, "",
+                from, to2, content2, image, Constants.token);
+
+        response.enqueue(new Callback<UploadResponse>() {
+            @Override
+            public void onResponse(final Call<UploadResponse> call, final Response<UploadResponse> response) {
+                if (!response.isSuccessful()) {
+                    Log.d(TAG, "onResponse: ");
+                    System.out.print(response);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(UploadActivity.this, "上传失败", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            finish();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(final Call<UploadResponse> call, final Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+
+    // TODO 7 选做 用URLConnection的方式实现提交
+    private void submitMessageWithURLConnection() {
+
+//        Log.d(TAG, "submitMessageWithURLConnection: start");
+//
+//        byte[] coverImageData = readDataFromUri(coverImageUri);
+//        if (coverImageData == null || coverImageData.length == 0) {
+//            Toast.makeText(this, "封面不存在", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//        String to = toEditText.getText().toString();
+//        if (TextUtils.isEmpty(to)) {
+//            Toast.makeText(this, "请输入TA的名字", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//        String content = contentEditText.getText().toString();
+//        if (TextUtils.isEmpty(content)) {
+//            Toast.makeText(this, "请输入想要对TA说的话", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//        if (coverImageData.length >= MAX_FILE_SIZE) {
+//            Toast.makeText(this, "文件过大", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//        // a network thread
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//                String urlStr = String.format(Constants.BASE_URL + "messages?student_id=%s&extra_value=%s", Constants.STUDENT_ID,"");
+//
+//                Log.d(TAG, "getData: " + urlStr);
+//
+//                MessageListResponse result = null;
+//                try {
+//                    URL url = new URL(urlStr);
+//                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//
+//                    conn.setConnectTimeout(6000);
+//                    conn.setRequestMethod("POST");
+//                    conn.setRequestProperty("token",Constants.token);
+//                    OutputStream outStrm = conn.getOutputStream();
+//                    ObjectOutputStream objOutputStrm = new ObjectOutputStream(outStrm);
+//
+//                    objOutputStrm.writeObject(new String("我是测试数据"));
+//
+//                    objOutputStrm.flush();
+//
+//                    objOutputStrm.close();
+//
+//                    if (conn.getResponseCode() == 200) {
+//
+//                        InputStream in = conn.getInputStream();
+//                        BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+//
+//                        result = new Gson().fromJson(reader, new TypeToken<MessageListResponse>() {
+//                        }.getType());
+//
+//                        reader.close();
+//                        in.close();
+//                        MessageListResponse finalResult = result;
+//                        // main thread
+//                        new Handler(getMainLooper()).post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                adapter.setData(finalResult.feeds);
+//                            }
+//                        });
+//
+//                    } else {
+//                        Log.d(TAG, "getData: error" + conn.getResponseCode());
+//                    }
+//                    conn.disconnect();
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//        ).start();
     }
 
 

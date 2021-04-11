@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="image">图片</string>
+    <string name="video">视频</string>
+    <string name="play">播放</string>
+    <string name="pause">暂停</string>
+    <string name="replay">重播</string>
+</resources>
